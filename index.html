@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Interactive Tabs</title>
+
+    <style type="text/css">
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            color: rgba(0,0,0,0.87);
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .site {
+            background-color: #fff;
+            max-width: 1024px;
+            padding: 48px;
+            margin: 48px auto;
+        }
+
+        .tabs__header {
+            position: relative;
+        }
+
+        .tabs__menu {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            align-items: baseline;
+
+            border-bottom: 1px solid rgba(0,0,0,0.12);
+        }
+
+        .tabs__tab-item {
+            color: rgba(0,0,0,0.54);
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1;
+            margin: 0 16px;
+            padding: 24px 0;
+            cursor: pointer;
+            transition: color .3s;
+        }
+
+        .tabs__tab-item.active {
+            color: rgba(0,0,0,0.87);
+            cursor: auto;
+        }
+
+        .tabs__tab-item:first-of-type {
+            margin-left: 0;
+        }
+
+        .tabs__tab-item:hover {
+            color: rgba(0,0,0,0.87);
+        }
+
+        .tabs__tab-content {
+            padding: 24px 0;
+            transition: opacity .5s;
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .tabs__tab-content.active {
+            position: static;
+            left: auto;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tabs__indicator {
+            width: 100%;
+            height: 4px;
+            background-color: #ffcc33;
+            position: absolute;
+            bottom: 0;
+
+            transition: transform .3s;
+            transition-timing-function: ease-in-out;
+            transform: translateX(0) scaleX(0);
+            transform-origin: left;
+        }
+
+        .align-right {
+            float: right;
+            display: block;
+            margin: 0 0 30px 30px;
+        }
+
+        .align-left {
+            float: left;
+            display: block;
+            margin: 0 30px 30px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+
+    <div class="site">
+
+
+        <div class="tabs">
+            <div class="tabs__header">
+                <ul class="tabs__menu">
+                    <li data-key="0" class="tabs__tab-item">Label One</li>
+                    <li data-key="1" class="tabs__tab-item">Label Two</li>
+                    <li data-key="2" class="tabs__tab-item">Really long long Label</li>
+                    <li data-key="3" class="tabs__tab-item">More Label</li>
+                </ul>
+                <div class="tabs__indicator"></div>
+            </div>
+            <div class="tabs__tab-content">
+                <h2>Headline #1</h2>
+                <img class="align-right" src="http://via.placeholder.com/350x150" alt="">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+            <div class="tabs__tab-content">
+                <h2>Headline #2</h2>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua.
+            </div>
+            <div class="tabs__tab-content">
+                <h2>Headline #3</h2>
+                <img class="align-left" src="http://via.placeholder.com/350x150" alt="">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+            <div class="tabs__tab-content">
+                <h2>Headline #4</h2>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        'use strict';
+        var tabsMenu = document.querySelector('.tabs__menu');
+        var tabsMenuWidth = tabsMenu.offsetWidth;
+        var indicator = document.querySelector('.tabs__indicator');
+        var tabsItems = document.querySelectorAll('.tabs__tab-item');
+        var tabsContentItems = document.querySelectorAll('.tabs__tab-content');
+        var lastPosition = 0;
+
+        setElementHighlighted(tabsItems[0]);
+
+        tabsMenu.addEventListener('click', function(e) {
+            if(e.target.tagName === 'LI') {
+                setElementHighlighted(e.target);
+            }
+        });
+
+        function setElementHighlighted(element) {
+            var elementWidth = element.offsetWidth;
+            var elementOffset = element.offsetLeft;
+            var scaleValue = elementWidth / tabsMenuWidth;
+            var distance = Math.abs(lastPosition - elementOffset);
+            var transitionTime = distance * 10;
+            console.log('Distance: ' + distance);
+            console.log('Time: ' + transitionTime + 'ms');
+            // indicator.style.transitionDuration = (distance * 3) + 'ms';
+            indicator.style.transform = `translateX(${elementOffset}px) scaleX(${scaleValue})`;
+
+
+
+
+            lastPosition = elementOffset;
+
+            setTabActive(element);
+            setTabContentActive(element.dataset.key);
+        }
+
+        function setTabActive(element) {
+            tabsItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function setTabContentActive(key) {
+            tabsContentItems.forEach(item => item.classList.remove('active'));
+            tabsContentItems[key].classList.add('active');
+        }
+
+
+    </script>
+
+</body>
+</html>
